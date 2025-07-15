@@ -17,11 +17,16 @@
 
 @implementation BDAlphaPlayerResourceModel
 
-+ (instancetype)resourceModelFromDirectory:(NSString *)directory orientation:(BDAlphaPlayerOrientation)orientation error:(NSError **)error
-{
++ (instancetype)resourceModelFromDirectory:(NSString *)directory
+                            configFileName:(NSString *)configFileName
+                              orientation:(BDAlphaPlayerOrientation)orientation
+                                   error:(NSError **)error {
     BDAlphaPlayerResourceModel *resourceModel = nil;
-    // json to dic
-    NSString *fileName = [NSString stringWithFormat:@"%@/config.json", directory];
+    
+    // 如果没有传入 configFileName，使用默认值 "config"
+    NSString *configName = configFileName ?: @"config";
+    NSString *fileName = [NSString stringWithFormat:@"%@/%@.json", directory, configName];
+    
     if ([[NSFileManager defaultManager] fileExistsAtPath:fileName]) {
         NSData *data = [NSData dataWithContentsOfFile:fileName];
         if (data.length) {
@@ -33,23 +38,32 @@
                 *error = jsonError;
             }
         } else {
-            *error = [NSError errorWithDomain:BDAlphaPlayerErrorDomain code:BDAlphaPlayerErrorCodeFile userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"config.json data nil %@", directory]}];
+            *error = [NSError errorWithDomain:BDAlphaPlayerErrorDomain
+                                         code:BDAlphaPlayerErrorCodeFile
+                                     userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"%@.json data nil %@", configName, directory]}];
         }
     } else {
-        *error = [NSError errorWithDomain:BDAlphaPlayerErrorDomain code:BDAlphaPlayerErrorCodeFile userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"config.json does not exist at %@", directory]}];
+        *error = [NSError errorWithDomain:BDAlphaPlayerErrorDomain
+                                     code:BDAlphaPlayerErrorCodeFile
+                                 userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"%@.json does not exist at %@", configName, directory]}];
     }
+    
     if (resourceModel) {
         resourceModel.directory = directory;
         resourceModel.currentOrientation = orientation;
         [resourceModel pr_replenish];
+        
         if (BDAlphaPlayerOrientationPortrait == resourceModel.currentOrientation) {
             resourceModel.currentOrientationResourceInfo = resourceModel.portraitResourceInfo;
         } else {
             resourceModel.currentOrientationResourceInfo = resourceModel.landscapeResourceInfo;
         }
+        
         BOOL isAvailable = [resourceModel.currentOrientationResourceInfo resourceAvailable];
         if (!isAvailable) {
-            *error = [NSError errorWithDomain:BDAlphaPlayerErrorDomain code:BDAlphaPlayerErrorConfigAvailable userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"config.json data not available %@", directory]}];
+            *error = [NSError errorWithDomain:BDAlphaPlayerErrorDomain
+                                         code:BDAlphaPlayerErrorConfigAvailable
+                                     userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"%@.json data not available %@", configName, directory]}];
             resourceModel = nil;
         }
     }

@@ -15,7 +15,7 @@
     configuration.directory = @"";
     configuration.orientation = BDAlphaPlayerOrientationPortrait;
     configuration.renderSuperViewFrame = CGRectZero;
-    
+    configuration.configFileName = @"config";
     return configuration;
 }
 

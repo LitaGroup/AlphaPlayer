@@ -57,12 +57,16 @@
 
 #pragma mark - Public Method
 
-- (void)playWithMetalConfiguration:(BDAlphaPlayerMetalConfiguration *)configuration
-{
+- (void)playWithMetalConfiguration:(BDAlphaPlayerMetalConfiguration *)configuration {
     NSAssert(!CGRectIsEmpty(configuration.renderSuperViewFrame), @"You need to initialize renderSuperViewFrame before playing");
     NSError *error = nil;
     self.renderSuperViewFrame = configuration.renderSuperViewFrame;
-    self.model = [BDAlphaPlayerResourceModel resourceModelFromDirectory:configuration.directory orientation:configuration.orientation error:&error];
+    
+    // 修改调用方式，传入 configFileName
+    self.model = [BDAlphaPlayerResourceModel resourceModelFromDirectory:configuration.directory
+                                                         configFileName:configuration.configFileName
+                                                           orientation:configuration.orientation
+                                                                error:&error];
     if (error) {
         [self didFinishPlayingWithError:error];
         return;
@@ -70,7 +74,6 @@
     [self configRenderViewContentModeFromModel];
     [self play];
 }
-
 - (NSTimeInterval)totalDurationOfPlayingEffect
 {
     if (self.output) {

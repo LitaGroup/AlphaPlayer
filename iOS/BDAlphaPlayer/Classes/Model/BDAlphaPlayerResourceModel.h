@@ -36,6 +36,8 @@
  @param orientation Orientation of MP4.
  @return resourceModel Resource data.
 */
-+ (instancetype)resourceModelFromDirectory:(NSString *)directory orientation:(BDAlphaPlayerOrientation)orientation error:(NSError **)error;
-
++ (instancetype)resourceModelFromDirectory:(NSString *)directory
+                            configFileName:(NSString *)configFileName
+                              orientation:(BDAlphaPlayerOrientation)orientation
+                                     error:(NSError **)error;
 @end

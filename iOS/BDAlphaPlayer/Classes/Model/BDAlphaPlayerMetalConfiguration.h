@@ -11,22 +11,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+// BDAlphaPlayerMetalConfiguration.h
 @interface BDAlphaPlayerMetalConfiguration : NSObject
 
-/**
- @brief String of resource directory that contains json and MP4.
-*/
+// 原有属性...
 @property (nonatomic, copy) NSString *directory;
-
-/**
- @brief The orientation you wanna play for.
-*/
+@property (nonatomic, assign) CGRect renderSuperViewFrame;
 @property (nonatomic, assign) BDAlphaPlayerOrientation orientation;
 
-/**
- @brief Frame of super view.The final frame of rendering will be decided by contentMode and renderSuperViewFrame.
-*/
-@property (nonatomic, assign) CGRect renderSuperViewFrame;
+// 新增 config 文件名属性（默认为 "config"）
+@property (nonatomic, copy) NSString *configFileName;
 
 + (instancetype)defaultConfiguration;
 
